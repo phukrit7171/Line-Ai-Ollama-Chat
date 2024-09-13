@@ -10,6 +10,7 @@ model = "qwen2:1.5b-instruct-q2_K"
 user_conversations = {}
 
 async def generate_response(user_id: str, prompt: str) -> str:
+    print('user id :',user_id,'prompt :', prompt)
     """Generates a response using Ollama, maintaining separate chat histories per user.
 
     Args:
@@ -25,6 +26,7 @@ async def generate_response(user_id: str, prompt: str) -> str:
 
     # Get the conversation history for this user, or create a new one
     conversation = user_conversations.get(user_id, [])
+    
 
     # Add the system instruction to new conversations
     if not conversation:

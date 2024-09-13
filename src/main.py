@@ -76,7 +76,6 @@ class Handler:
             return web.Response(status=400, text='Invalid signature')
 
         for event in events:
-            print('User ID:',event.source.user_id)
             await self.line_bot_api.show_loading_animation(
             ShowLoadingAnimationRequest(chatId=event.source.user_id,loadingSeconds=30)
             )
