@@ -1,1 +1,50 @@
+# gitignore for Python
+
+# Bytecode files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Environments
 .env
+.venv
+env/
+venv/
+
+# IDE/Editor specific files
+.idea/
+.vscode/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# Pytest cache
+.pytest_cache
+
+# Unit test / coverage reports
+htmlcov/
+.coverage
+.tox/
+
+# Miscellaneous
+*.log
+.DS_Store
+Thumbs.db
+
+# Compiled Cython files
+*.so
+
+# Example configuration files (adjust as needed)
+# settings.py
+# local_settings.py
+# instance/
+
+# Project-specific large files or directories
+# my_large_data/
+# my_model_weights.h5
