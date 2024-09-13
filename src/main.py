@@ -42,7 +42,9 @@ from linebot.v3.exceptions import (
 )
 from linebot.v3.webhooks import (
     MessageEvent,
-    TextMessageContent
+    TextMessageContent,
+    ImageMessageContent,
+    StickerMessageContent,
 )
 
 
@@ -82,12 +84,26 @@ class Handler:
             if not isinstance(event, MessageEvent):
                 continue
             if isinstance(event.message, TextMessageContent):
+                print('TextMessageContent')
                 await self.line_bot_api.reply_message(
                 ReplyMessageRequest(
                     reply_token=event.reply_token,
                     messages=[TextMessage(text=await generate_response(event.source.user_id,event.message.text))]
                 )
             )
+            if isinstance(event.message, ImageMessageContent):
+                print('ImageMessageContent')
+                pass
+            if isinstance(event.message, StickerMessageContent):
+                print('StickerMessageContent')
+                text = ' '.join(event.message.keywords)
+                text = f'I feel {text}'
+                print(text)
+                ReplyMessageRequest(
+                    reply_token=event.reply_token,
+                    messages=[TextMessage(text=text)]
+                )
+                pass
             
 
         return web.Response(text="OK\n")
