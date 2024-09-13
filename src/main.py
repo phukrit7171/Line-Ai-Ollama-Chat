@@ -81,14 +81,14 @@ class Handler:
             )
             if not isinstance(event, MessageEvent):
                 continue
-            if not isinstance(event.message, TextMessageContent):
-                continue
-            await self.line_bot_api.reply_message(
+            if isinstance(event.message, TextMessageContent):
+                await self.line_bot_api.reply_message(
                 ReplyMessageRequest(
                     reply_token=event.reply_token,
                     messages=[TextMessage(text=await generate_response(event.source.user_id,event.message.text))]
                 )
             )
+            
 
         return web.Response(text="OK\n")
 
