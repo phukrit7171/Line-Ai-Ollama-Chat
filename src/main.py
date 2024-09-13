@@ -87,7 +87,7 @@ class Handler:
             await self.line_bot_api.reply_message(
                 ReplyMessageRequest(
                     reply_token=event.reply_token,
-                    messages=[TextMessage(text=generate_response(event.source.user_id,event.message.text))]
+                    messages=[TextMessage(text=await generate_response(event.source.user_id,event.message.text))]
                 )
             )
 
