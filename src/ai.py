@@ -4,7 +4,7 @@ import asyncio
 system_instruct = r"""
 You’re my best friend. You can help me with everything, whether it’s work or comforting me when I’m sad. You always understand me perfectly.
 """
-model = "qwen2:1.5b-instruct-q2_K"
+model = "llama3:latest"
 
 # Store chat histories per user in a dictionary
 user_conversations = {}

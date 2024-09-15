@@ -12,6 +12,7 @@
 #  License for the specific language governing permissions and limitations
 #  under the License.
 from dotenv import load_dotenv
+
 load_dotenv()
 
 from ai import generate_response
@@ -26,20 +27,16 @@ import logging
 
 from aiohttp.web_runner import TCPSite
 
-from linebot.v3 import (
-    WebhookParser
-)
+from linebot.v3 import WebhookParser
 from linebot.v3.messaging import (
     Configuration,
     AsyncApiClient,
     AsyncMessagingApi,
     TextMessage,
     ReplyMessageRequest,
-    ShowLoadingAnimationRequest
+    ShowLoadingAnimationRequest,
 )
-from linebot.v3.exceptions import (
-    InvalidSignatureError
-)
+from linebot.v3.exceptions import InvalidSignatureError
 from linebot.v3.webhooks import (
     MessageEvent,
     TextMessageContent,
@@ -49,18 +46,16 @@ from linebot.v3.webhooks import (
 
 
 # get channel_secret and channel_access_token from your environment variable
-channel_secret = os.getenv('LINE_CHANNEL_SECRET', None)
-channel_access_token = os.getenv('LINE_CHANNEL_ACCESS_TOKEN', None)
+channel_secret = os.getenv("LINE_CHANNEL_SECRET", None)
+channel_access_token = os.getenv("LINE_CHANNEL_ACCESS_TOKEN", None)
 if channel_secret is None:
-    print('Specify LINE_CHANNEL_SECRET as environment variable.')
+    print("Specify LINE_CHANNEL_SECRET as environment variable.")
     sys.exit(1)
 if channel_access_token is None:
-    print('Specify LINE_CHANNEL_ACCESS_TOKEN as environment variable.')
+    print("Specify LINE_CHANNEL_ACCESS_TOKEN as environment variable.")
     sys.exit(1)
 
-configuration = Configuration(
-    access_token=channel_access_token
-)
+configuration = Configuration(access_token=channel_access_token)
 
 
 class Handler:
@@ -69,42 +64,50 @@ class Handler:
         self.parser = parser
 
     async def echo(self, request):
-        signature = request.headers['X-Line-Signature']
+        signature = request.headers["X-Line-Signature"]
         body = await request.text()
 
         try:
             events = self.parser.parse(body, signature)
         except InvalidSignatureError:
-            return web.Response(status=400, text='Invalid signature')
+            return web.Response(status=400, text="Invalid signature")
 
         for event in events:
             await self.line_bot_api.show_loading_animation(
-            ShowLoadingAnimationRequest(chatId=event.source.user_id,loadingSeconds=30)
+                ShowLoadingAnimationRequest(
+                    chatId=event.source.user_id, loadingSeconds=30
+                )
             )
             if not isinstance(event, MessageEvent):
                 continue
             if isinstance(event.message, TextMessageContent):
-                print('TextMessageContent')
+                print("TextMessageContent")
                 await self.line_bot_api.reply_message(
-                ReplyMessageRequest(
-                    reply_token=event.reply_token,
-                    messages=[TextMessage(text=await generate_response(event.source.user_id,event.message.text))]
+                    ReplyMessageRequest(
+                        reply_token=event.reply_token,
+                        messages=[
+                            TextMessage(
+                                text=await generate_response(
+                                    event.source.user_id, event.message.text
+                                )
+                            )
+                        ],
+                    )
                 )
-            )
             if isinstance(event.message, ImageMessageContent):
-                print('ImageMessageContent')
+                print("ImageMessageContent")
                 pass
             if isinstance(event.message, StickerMessageContent):
-                print('StickerMessageContent')
-                text = ' '.join(event.message.keywords)
-                text = f'I feel {text}'
+                print("StickerMessageContent")
+                text = ", ".join(event.message.keywords)
+                text = f"I feel {text}"
                 print(text)
-                ReplyMessageRequest(
-                    reply_token=event.reply_token,
-                    messages=[TextMessage(text=text)]
+                await self.line_bot_api.reply_message(
+                    ReplyMessageRequest(
+                        reply_token=event.reply_token, messages=[TextMessage(text=text)]
+                    )
                 )
                 pass
-            
 
         return web.Response(text="OK\n")
 
@@ -117,7 +120,7 @@ async def main(port=8000):
     handler = Handler(line_bot_api, parser)
 
     app = web.Application()
-    app.add_routes([web.post('/callback', handler.echo)])
+    app.add_routes([web.post("/callback", handler.echo)])
 
     runner = web.AppRunner(app)
     await runner.setup()
@@ -128,12 +131,12 @@ async def main(port=8000):
 
 
 if __name__ == "__main__":
-    logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
+    logging.basicConfig(format="%(levelname)s:%(message)s", level=logging.INFO)
 
     arg_parser = ArgumentParser(
-        usage='Usage: python ' + __file__ + ' [--port <port>] [--help]'
+        usage="Usage: python " + __file__ + " [--port <port>] [--help]"
     )
-    arg_parser.add_argument('-p', '--port', type=int, default=8000, help='port')
+    arg_parser.add_argument("-p", "--port", type=int, default=8000, help="port")
     options = arg_parser.parse_args()
-    print(f'Starting on port {options.port} ...')
+    print(f"Starting on port {options.port} ...")
     asyncio.run(main(options.port))
