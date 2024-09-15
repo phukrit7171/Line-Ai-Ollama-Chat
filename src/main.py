@@ -97,7 +97,7 @@ class Handler:
             if isinstance(event.message, ImageMessageContent):
                 print("ImageMessageContent")
                 print(event)
-                image_object = LineBotApi(os.getenv("LINE_CHANNEL_ACCESS_TOKEN")).get_message_content(event.message.id)
+                image_object = LineBotApi(channel_access_token).get_message_content(event.message.id)
                 image_binary = image_object.content
                 await self.line_bot_api.reply_message(
                     ReplyMessageRequest(
