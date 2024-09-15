@@ -25,7 +25,6 @@ import logging
 
 from aiohttp.web_runner import TCPSite
 
-from linebot import LineBotApi
 from linebot.v3 import WebhookParser
 from linebot.v3.messaging import (
     Configuration,
@@ -34,7 +33,7 @@ from linebot.v3.messaging import (
     TextMessage,
     ReplyMessageRequest,
     ShowLoadingAnimationRequest,
-    MessagingApiBlob
+    AsyncMessagingApiBlob
 )
 from linebot.v3.exceptions import InvalidSignatureError
 from linebot.v3.webhooks import (
@@ -97,8 +96,8 @@ class Handler:
             if isinstance(event.message, ImageMessageContent):
                 print("ImageMessageContent")
                 print(event)
-                image_object = LineBotApi(channel_access_token).get_message_content(event.message.id)
-                image_binary = image_object.content
+                image_binary = await AsyncMessagingApiBlob(AsyncApiClient(configuration)).get_message_content(event.message.id)
+                # print(image_binary)
                 await self.line_bot_api.reply_message(
                     ReplyMessageRequest(
                         reply_token=event.reply_token, messages=[TextMessage(text=await generate_response(event.source.user_id, image_data=image_binary))]
