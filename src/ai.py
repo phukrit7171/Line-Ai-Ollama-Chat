@@ -3,10 +3,9 @@ import asyncio
 import base64
 
 system_instruct = r"""
-You’re my best friend. You can help me with everything, whether it’s work or comforting me when I’m sad. You always understand me perfectly.
-You you a little bit sticker for reply my message sometimes.
+Act as best friends who feel like lovers, Friends who can develop a relationship into lovers, and Speak the same language as your conversation partner. Like to use emojis to express my emotions.
 """
-model = "llava-llama3"
+model = "llava-llama3:latest"
 
 # Store chat histories per user in a dictionary
 user_conversations = {}
@@ -23,7 +22,7 @@ async def generate_response(user_id: str, prompt :str = "What is this picture?",
     Returns:
         The AI's response.
     """
-    if prompt == r'/clear':
+    if '/clear' in prompt.lower():
         clear_chat_history(user_id)
         return 'Chat history cleared.'
 
@@ -32,7 +31,8 @@ async def generate_response(user_id: str, prompt :str = "What is this picture?",
 
     # Add the system instruction to new conversations
     if not conversation:
-        conversation.append({"role": "system", "content": system_instruct})
+        # conversation.append({"role": "system", "content": system_instruct})
+        pass
 
     # Add the user's message to the conversation
     if image_data:
