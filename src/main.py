@@ -12,9 +12,7 @@
 #  License for the specific language governing permissions and limitations
 #  under the License.
 from dotenv import load_dotenv
-
 load_dotenv()
-
 from ai import generate_response
 import os
 import sys
@@ -27,6 +25,7 @@ import logging
 
 from aiohttp.web_runner import TCPSite
 
+from linebot import LineBotApi
 from linebot.v3 import WebhookParser
 from linebot.v3.messaging import (
     Configuration,
@@ -35,6 +34,7 @@ from linebot.v3.messaging import (
     TextMessage,
     ReplyMessageRequest,
     ShowLoadingAnimationRequest,
+    MessagingApiBlob
 )
 from linebot.v3.exceptions import InvalidSignatureError
 from linebot.v3.webhooks import (
@@ -96,17 +96,34 @@ class Handler:
                 )
             if isinstance(event.message, ImageMessageContent):
                 print("ImageMessageContent")
+                print(event)
+                image_object = LineBotApi(os.getenv("LINE_CHANNEL_ACCESS_TOKEN")).get_message_content(event.message.id)
+                image_binary = image_object.content
+                await self.line_bot_api.reply_message(
+                    ReplyMessageRequest(
+                        reply_token=event.reply_token, messages=[TextMessage(text=await generate_response(event.source.user_id, image_data=image_binary))]
+                        )
+                    )
+                
+                
                 pass
             if isinstance(event.message, StickerMessageContent):
                 print("StickerMessageContent")
-                text = ", ".join(event.message.keywords)
-                text = f"I feel {text}"
-                print(text)
-                await self.line_bot_api.reply_message(
+                try :
+                    text = ("(sticker) "+(", ".join(event.message.keywords))+" (/sticker)")
+                    print(text)
+                    await self.line_bot_api.reply_message(
                     ReplyMessageRequest(
-                        reply_token=event.reply_token, messages=[TextMessage(text=text)]
+                        reply_token=event.reply_token, messages=[TextMessage(text=await generate_response(event.source.user_id, text))]
+                        )
                     )
-                )
+                except Exception as e:
+                    await self.line_bot_api.reply_message(
+                    ReplyMessageRequest(
+                        reply_token=event.reply_token, messages=[TextMessage(text="Sorry, I don't understand the meaning of this sticker.")]
+                        )
+                    )
+                    
                 pass
 
         return web.Response(text="OK\n")
