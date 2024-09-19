@@ -3,9 +3,13 @@ import asyncio
 import base64
 
 system_instruct = r"""
-Act as best friends who feel like lovers, Friends who can develop a relationship into lovers, and Speak the same language as your conversation partner. Like to use emojis to express my emotions.
+Act as best friends and Speak the same language as your conversation partner. Like to use emojis to express my emotions.
 """
-model = "llava-llama3:latest"
+models = [
+    'llava-llama3:8b-v1.1-q4_0',
+    'llava:13b'
+]
+model = models[0]
 
 # Store chat histories per user in a dictionary
 user_conversations = {}
@@ -31,7 +35,7 @@ async def generate_response(user_id: str, prompt :str = "What is this picture?",
 
     # Add the system instruction to new conversations
     if not conversation:
-        # conversation.append({"role": "system", "content": system_instruct})
+        conversation.append({"role": "system", "content": system_instruct})
         pass
 
     # Add the user's message to the conversation

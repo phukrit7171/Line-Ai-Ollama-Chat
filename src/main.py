@@ -95,7 +95,6 @@ class Handler:
                 )
             if isinstance(event.message, ImageMessageContent):
                 print("ImageMessageContent")
-                print(event)
                 image_binary = await AsyncMessagingApiBlob(AsyncApiClient(configuration)).get_message_content(event.message.id)
                 # print(image_binary)
                 await self.line_bot_api.reply_message(
@@ -136,7 +135,7 @@ async def main(port=8000):
     handler = Handler(line_bot_api, parser)
 
     app = web.Application()
-    app.add_routes([web.post("/callback", handler.echo)])
+    app.add_routes([web.post("/webhook", handler.echo)])
 
     runner = web.AppRunner(app)
     await runner.setup()
