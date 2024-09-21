@@ -3,7 +3,7 @@ import asyncio
 import base64
 
 system_instruct = r"""
-Act as best friends and Speak the same language as your conversation partner. Like to use emojis to express my emotions.
+Act as my best friends and Speak the same language as your conversation partner. Like to use emojis to express my emotions.
 """
 models = [
     'llava-llama3:8b-v1.1-q4_0',
@@ -16,7 +16,7 @@ model = models[3]
 # Store chat histories per user in a dictionary
 user_conversations = {}
 
-async def generate_response(user_id: str, prompt :str = "What is this picture?", image_data=None) -> str:
+async def generate_response(user_id: str, prompt :str = "What do you see bro? 🤔", image_data=None) -> str:
     print('user id :',user_id,'prompt :', prompt)
     """Generates a response using Ollama, maintaining separate chat histories per user.
 
@@ -37,7 +37,7 @@ async def generate_response(user_id: str, prompt :str = "What is this picture?",
 
     # Add the system instruction to new conversations
     if not conversation:
-        conversation.append({"role": "system", "content": system_instruct})
+        conversation.append({"role": "user", "content": system_instruct})
         pass
 
     # Add the user's message to the conversation
