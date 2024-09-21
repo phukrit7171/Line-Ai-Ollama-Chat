@@ -7,9 +7,11 @@ Act as best friends and Speak the same language as your conversation partner. Li
 """
 models = [
     'llava-llama3:8b-v1.1-q4_0',
-    'llava:13b'
+    'llava:13b',
+    'bakllava:7b',
+    'llava-phi3'
 ]
-model = models[0]
+model = models[3]
 
 # Store chat histories per user in a dictionary
 user_conversations = {}
