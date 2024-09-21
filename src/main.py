@@ -79,7 +79,7 @@ class Handler:
             )
             if not isinstance(event, MessageEvent):
                 continue
-            if isinstance(event.message, TextMessageContent):
+            elif isinstance(event.message, TextMessageContent):
                 print("TextMessageContent")
                 await self.line_bot_api.reply_message(
                     ReplyMessageRequest(
@@ -93,7 +93,7 @@ class Handler:
                         ],
                     )
                 )
-            if isinstance(event.message, ImageMessageContent):
+            elif isinstance(event.message, ImageMessageContent):
                 print("ImageMessageContent")
                 image_binary = await AsyncMessagingApiBlob(AsyncApiClient(configuration)).get_message_content(event.message.id)
                 # print(image_binary)
@@ -101,30 +101,17 @@ class Handler:
                     ReplyMessageRequest(
                         reply_token=event.reply_token, messages=[TextMessage(text=await generate_response(event.source.user_id, image_data=image_binary))]
                         )
-                    )
-                
-                
+                    )                
                 pass
-            if isinstance(event.message, StickerMessageContent):
-                print("StickerMessageContent")
-                try :
-                    text = ("(sticker) "+(", ".join(event.message.keywords))+" (/sticker)")
-                    print(text)
-                    await self.line_bot_api.reply_message(
+            else:
+                await self.line_bot_api.reply_message(
                     ReplyMessageRequest(
-                        reply_token=event.reply_token, messages=[TextMessage(text=await generate_response(event.source.user_id, text))]
+                        reply_token=event.reply_token, messages=[TextMessage(text="Sorry, I do not currently support this message type.")]
                         )
                     )
-                except Exception as e:
-                    await self.line_bot_api.reply_message(
-                    ReplyMessageRequest(
-                        reply_token=event.reply_token, messages=[TextMessage(text="Sorry, I don't understand the meaning of this sticker.")]
-                        )
-                    )
-                    
-                pass
-
+                
         return web.Response(text="OK\n")
+
 
 
 async def main(port=8000):
